@@ -28,10 +28,23 @@ WHEEL_DIAMETER = 56.0
 # но нужна, чтобы переводить угловую коррекцию в скорости моторов.
 WHEELBASE = 120.0
 
-# --- Порты ведущих моторов ---------------------------------------------------
-# Смотрите буквы на хабе. Типичная FLL-схема: левый A, правый B.
-LEFT_MOTOR_PORT = port.A
-RIGHT_MOTOR_PORT = port.B
+# --- Карта портов хаба -------------------------------------------------------
+#   C + E  — ведущие колёса базы
+#   A + D  — цветовые датчики
+#   B + F  — навесные моторы (механизмы миссий)
+#
+# Левый/правый — как у водителя, нос робота вперёд.
+# Если база едет боком / крутится не в ту сторону — поменяйте C и E местами
+# или инвертируйте LEFT_MOTOR_SIGN / RIGHT_MOTOR_SIGN.
+
+LEFT_MOTOR_PORT = port.C
+RIGHT_MOTOR_PORT = port.E
+
+COLOR_SENSOR_A = port.A
+COLOR_SENSOR_D = port.D
+
+ATTACHMENT_MOTOR_B = port.B
+ATTACHMENT_MOTOR_F = port.F
 
 # Знак мотора: +1, если положительная скорость крутит колесо ВПЕРЁД.
 # У большинства баз левый мотор развёрнут «осью наружу» — тогда LEFT = -1.
@@ -444,6 +457,10 @@ async def main():
     odom = Odometry(WHEEL_DIAMETER)
     pid = PID(PID_KP, PID_KI, PID_KD, PID_I_LIMIT, PID_OUTPUT_LIMIT)
     follower = PathFollower(PATH, LOOKAHEAD_MM, WAYPOINT_RADIUS_MM, GOAL_TOLERANCE_MM)
+
+    # Навесные моторы B и F не участвуют в навигации — держим их выключенными.
+    motor.stop(ATTACHMENT_MOTOR_B)
+    motor.stop(ATTACHMENT_MOTOR_F)
 
     # Дать IMU время стабилизироваться. Не двигайте робота в эти 400 мс.
     odom.reset()
