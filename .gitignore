@@ -1,0 +1,17 @@
+# Python / MicroPython
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyo
+
+# Editors and OS
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Local notes
+.env
+*.local.md
